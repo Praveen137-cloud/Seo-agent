@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SEOAgent.ai — 1-Click Site Audit",
+  "version": "1.0",
+  "description": "Audit any website with 1 click using SEOAgent.ai",
+  "permissions": [
+    "activeTab"
+  ],
+  "action": {
+    "default_title": "Audit this page with SEOAgent.ai",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
