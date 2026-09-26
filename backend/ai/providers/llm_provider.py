@@ -15,13 +15,39 @@ class LLMProvider:
     async def generate_completion(self, prompt: str, system_prompt: str = "") -> str:
         """
         Attempts configured LLM providers in priority order:
-        1. Google Gemini API
-        2. OpenAI API
-        3. Groq API
-        4. Ollama local (with automatic model detection)
+        1. Groq Cloud API (High-speed Llama / Qwen inference)
+        2. Google Gemini API
+        3. OpenAI API
+        4. Ollama local
         5. Smart built-in AI response generator fallback
         """
-        # 1. Gemini
+        # 1. Groq Cloud API
+        if self.groq_key:
+            groq_models = ["openai/gpt-oss-20b", "qwen/qwen3.8-27b", "llama-3.1-8b-instant", "llama3-8b-8192", "allam-2-7b"]
+            headers = {"Authorization": f"Bearer {self.groq_key}"}
+            
+            for model_name in groq_models:
+                try:
+                    url = "https://api.groq.com/openai/v1/chat/completions"
+                    payload = {
+                        "model": model_name,
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": 0.3
+                    }
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        resp = await client.post(url, json=payload, headers=headers)
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            content = data["choices"][0]["message"]["content"]
+                            logger.info(f"Successfully generated response via Groq API model '{model_name}'")
+                            return content
+                except Exception as e:
+                    logger.warning(f"Groq API call with model {model_name} failed: {e}")
+
+        # 2. Gemini API
         if self.gemini_key:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.gemini_key}"
@@ -38,7 +64,7 @@ class LLMProvider:
             except Exception as e:
                 logger.warning(f"Gemini API call failed: {e}")
 
-        # 2. OpenAI
+        # 3. OpenAI API
         if self.openai_key:
             try:
                 url = "https://api.openai.com/v1/chat/completions"
@@ -59,27 +85,7 @@ class LLMProvider:
             except Exception as e:
                 logger.warning(f"OpenAI API call failed: {e}")
 
-        # 3. Groq
-        if self.groq_key:
-            try:
-                url = "https://api.groq.com/openai/v1/chat/completions"
-                headers = {"Authorization": f"Bearer {self.groq_key}"}
-                payload = {
-                    "model": "llama-3.3-70b-versatile",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": prompt}
-                    ]
-                }
-                async with httpx.AsyncClient(timeout=30.0) as client:
-                    resp = await client.post(url, json=payload, headers=headers)
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        return data["choices"][0]["message"]["content"]
-            except Exception as e:
-                logger.warning(f"Groq API call failed: {e}")
-
-        # 4. Ollama Local (Auto-detect installed models)
+        # 4. Ollama Local
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 models_resp = await client.get(f"{self.ollama_url}/api/tags")
