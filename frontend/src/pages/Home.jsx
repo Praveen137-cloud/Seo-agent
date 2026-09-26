@@ -68,29 +68,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 1-Click Browser Integration Section (Extension & Search Shortcut) */}
+      {/* 1-Click Browser Integration Section */}
       <section className="max-w-4xl mx-auto px-4">
-        <div className="p-6 sm:p-8 bg-white border border-slate-200 rounded-3xl shadow-lg space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 bg-red-50 px-3 py-1 rounded-full border border-red-200">
-                <Puzzle className="w-3.5 h-3.5 text-red-600" /> 1-Click Browser Integration
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">Audit Any Site Instantly While Browsing</h3>
+        <div className="p-5 sm:p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 bg-red-50 text-red-600 rounded-lg">
+                <Puzzle className="w-4 h-4" />
+              </span>
+              <h3 className="text-base font-bold text-slate-900">Chrome Extension & Shortcut Setup</h3>
             </div>
 
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
               <button
                 onClick={() => setActiveTab('extension')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                   activeTab === 'extension' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Chrome Extension (100% Reliable)
+                Chrome Extension
               </button>
               <button
                 onClick={() => setActiveTab('search')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                   activeTab === 'search' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -100,44 +100,28 @@ export default function Home() {
           </div>
 
           {activeTab === 'extension' ? (
-            <div className="space-y-4 text-xs text-slate-700 font-medium">
-              <p className="leading-relaxed">
-                Modern security policies (CSP) block traditional bookmarklets on many HTTPS sites. We built a lightweight <strong>1-Click Chrome/Edge Extension</strong> that bypasses all restrictions!
-              </p>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <span className="font-bold text-slate-900 text-sm block">10-Second Extension Setup Instructions:</span>
-                <ol className="list-decimal pl-5 space-y-2 text-slate-700">
-                  <li>Open Chrome or Edge and go to <code className="bg-slate-200 px-1.5 py-0.5 rounded text-red-700 font-mono">chrome://extensions</code> (or <code className="bg-slate-200 px-1.5 py-0.5 rounded text-red-700 font-mono">edge://extensions</code>).</li>
-                  <li>Enable <strong className="text-slate-900">Developer mode</strong> toggle in the top-right corner.</li>
-                  <li>Click <strong className="text-slate-900">Load unpacked</strong> button and select the folder:
-                    <div className="mt-1 p-2 bg-slate-900 text-emerald-400 font-mono rounded-xl text-[11px] font-semibold select-all">
-                      c:\Users\prave\Downloads\seo agent\chrome-extension
-                    </div>
-                  </li>
-                  <li>Pin the extension icon to your toolbar! Whenever you visit any site, 1-click the icon to audit it instantly!</li>
+            <div className="text-xs text-slate-600 space-y-2 font-medium">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center gap-2 text-slate-800 font-bold">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Quick Chrome Extension Setup:</span>
+                </div>
+                <ol className="list-decimal pl-5 space-y-1 text-slate-700">
+                  <li>In Chrome, open <code className="bg-slate-200 px-1 py-0.5 rounded text-red-700 font-mono">chrome://extensions</code> and enable <strong>Developer mode</strong>.</li>
+                  <li>Click <strong>Load unpacked</strong> and select the <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">chrome-extension</code> folder.</li>
                 </ol>
               </div>
             </div>
           ) : (
-            <div className="space-y-4 text-xs text-slate-700 font-medium">
-              <p className="leading-relaxed">
-                Audit any website straight from your browser address bar by typing <code className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold font-mono">seo example.com</code>!
-              </p>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <span className="font-bold text-slate-900 text-sm block">How to set up Address Bar Search Shortcut:</span>
-                <ol className="list-decimal pl-5 space-y-2 text-slate-700">
-                  <li>Go to Chrome Settings → <strong className="text-slate-900">Search engine</strong> → <strong className="text-slate-900">Manage search engines and site search</strong>.</li>
-                  <li>Under <strong>Site search</strong>, click <strong>Add</strong>.</li>
-                  <li>Fill in:
-                    <ul className="list-disc pl-5 mt-1 space-y-1 font-mono text-[11px]">
-                      <li>Shortcut: <strong className="text-red-600">seo</strong></li>
-                      <li>URL with %s in place of query: <strong className="text-emerald-700">http://localhost:5173/?url=%s</strong></li>
-                    </ul>
-                  </li>
-                  <li>Now type <code className="bg-slate-200 px-1.5 py-0.5 rounded font-mono font-bold">seo github.com</code> in your URL bar anytime to launch an instant audit!</li>
-                </ol>
+            <div className="text-xs text-slate-600 space-y-2 font-medium">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center gap-2 text-slate-800 font-bold">
+                  <Search className="w-3.5 h-3.5 text-red-600" />
+                  <span>Address Bar Search Shortcut:</span>
+                </div>
+                <p className="text-slate-700">
+                  Add custom site search in Chrome settings with URL pattern: <code className="bg-slate-200 px-1.5 py-0.5 rounded font-mono text-slate-900">https://seo-agent-inky-seven.vercel.app/?url=%s</code>
+                </p>
               </div>
             </div>
           )}
