@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import UrlInput from '../components/UrlInput';
 import { startAudit, getRecentAudits } from '../services/api';
-import { Sparkles, ShieldCheck, Cpu, ArrowRight, History, Zap, Puzzle, Search, CheckCircle } from 'lucide-react';
+import { Sparkles, ShieldCheck, Cpu, ArrowRight, History, Zap, Puzzle, Search, CheckCircle, Download } from 'lucide-react';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -100,16 +100,27 @@ export default function Home() {
           </div>
 
           {activeTab === 'extension' ? (
-            <div className="text-xs text-slate-600 space-y-2 font-medium">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-slate-800 font-bold">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Quick Chrome Extension Setup:</span>
+            <div className="text-xs text-slate-600 space-y-3 font-medium">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    <span>Install SEOAgent Chrome Extension</span>
+                  </div>
+                  <ol className="list-decimal pl-5 space-y-1 text-slate-700 text-xs mt-1">
+                    <li>Click <strong>Download Extension (.zip)</strong> button.</li>
+                    <li>Unzip the downloaded file on your computer.</li>
+                    <li>Open <code className="bg-slate-200 px-1 py-0.5 rounded text-red-700 font-mono">chrome://extensions</code>, turn on <strong>Developer mode</strong>, and click <strong>Load unpacked</strong>.</li>
+                  </ol>
                 </div>
-                <ol className="list-decimal pl-5 space-y-1 text-slate-700">
-                  <li>In Chrome, open <code className="bg-slate-200 px-1 py-0.5 rounded text-red-700 font-mono">chrome://extensions</code> and enable <strong>Developer mode</strong>.</li>
-                  <li>Click <strong>Load unpacked</strong> and select the <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">chrome-extension</code> folder.</li>
-                </ol>
+                <a
+                  href="/seo-agent-extension.zip"
+                  download="seo-agent-extension.zip"
+                  className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm transition-all shrink-0 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Extension (.zip)
+                </a>
               </div>
             </div>
           ) : (
