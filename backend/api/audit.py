@@ -262,3 +262,19 @@ def list_audits(limit: int = 20, db: Session = Depends(get_db)):
         "pages_crawled": a.pages_crawled,
         "created_at": a.created_at
     } for a in audits]
+
+@router.get("/debug/fetch")
+def debug_fetch(url: str):
+    crawler = WebCrawler(url, max_pages=1)
+    try:
+        r = crawler.session.get(url, headers=crawler.headers, timeout=crawler.timeout, allow_redirects=True)
+        return {
+            "status_code": r.status_code,
+            "url": r.url,
+            "headers": dict(r.headers),
+            "content_preview": r.text[:500],
+            "history": [h.status_code for h in r.history]
+        }
+    except Exception as e:
+        return {"error": str(e), "type": type(e).__name__}
+
