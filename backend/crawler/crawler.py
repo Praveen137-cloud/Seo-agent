@@ -124,17 +124,43 @@ class WebCrawler:
                 if is_internal:
                     discovered_links.append(full_url)
 
-            # Canonical tag
-            canonical_tag = soup.find("link", attrs={"rel": "canonical"})
-            canonical_url = canonical_tag.get("href", "").strip() if canonical_tag else ""
-            if canonical_url:
-                canonical_url = urljoin(url, canonical_url)
+            # Viewport (Mobile responsiveness)
+            viewport_tag = soup.find("meta", attrs={"name": "viewport"})
+            viewport = viewport_tag.get("content", "").strip() if viewport_tag else ""
+
+            # Robots meta / noindex
+            robots_tag = soup.find("meta", attrs={"name": "robots"})
+            robots_meta = robots_tag.get("content", "").strip().lower() if robots_tag else ""
+            if not robots_meta:
+                robots_meta = resp.headers.get("X-Robots-Tag", "").strip().lower()
+
+            # Structured Data (Schema JSON-LD)
+            schema_tags = soup.find_all("script", attrs={"type": "application/ld+json"})
+            has_schema = len(schema_tags) > 0
+
+            # Open Graph & Twitter Social Tags
+            og_title = (soup.find("meta", property="og:title") or {}).get("content", "").strip()
+            og_desc = (soup.find("meta", property="og:description") or {}).get("content", "").strip()
+            og_image = (soup.find("meta", property="og:image") or {}).get("content", "").strip()
+            twitter_card = (soup.find("meta", attrs={"name": "twitter:card"}) or {}).get("content", "").strip()
+
+            # HTML Lang & Charset
+            html_tag = soup.find("html")
+            html_lang = html_tag.get("lang", "").strip() if html_tag else ""
+            charset_tag = soup.find("meta", charset=True) or soup.find("meta", attrs={"http-equiv": "content-type"})
+            has_charset = bool(charset_tag)
+
+            # Favicon
+            favicon_tag = soup.find("link", rel=lambda r: r and any("icon" in str(x).lower() for x in (r if isinstance(r, list) else [r])))
+            has_favicon = bool(favicon_tag)
 
             # Text content & word count
-            for element in soup(["script", "style", "nav", "footer"]):
+            soup_clean = BeautifulSoup(resp.text, "lxml")
+            for element in soup_clean(["script", "style", "nav", "footer"]):
                 element.decompose()
-            body_text = soup.get_text(separator=" ", strip=True)
+            body_text = soup_clean.get_text(separator=" ", strip=True)
             word_count = len(body_text.split())
+            text_sample = body_text[:400] if body_text else ""
 
             return {
                 "url": url,
@@ -151,7 +177,21 @@ class WebCrawler:
                 "discovered_links": discovered_links,
                 "canonical_url": canonical_url,
                 "word_count": word_count,
-                "raw_soup": soup
+                "viewport": viewport,
+                "robots_meta": robots_meta,
+                "has_schema": has_schema,
+                "schema_count": len(schema_tags),
+                "og_tags": {
+                    "og_title": og_title,
+                    "og_desc": og_desc,
+                    "og_image": og_image,
+                    "twitter_card": twitter_card
+                },
+                "html_lang": html_lang,
+                "has_charset": has_charset,
+                "has_favicon": has_favicon,
+                "text_sample": text_sample,
+                "raw_soup": None
             }
         except Exception as e:
             logger.error(f"Error crawling {url}: {e}")

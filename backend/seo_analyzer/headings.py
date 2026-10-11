@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+from urllib.parse import urlparse
 
 def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     issues = []
@@ -7,6 +8,7 @@ def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         url = page["url"]
         h1_tags = page.get("h1_tags", [])
         h2_tags = page.get("h2_tags", [])
+        parsed_path = urlparse(url).path.rstrip("/") or "/"
 
         # H1 Checks
         if not h1_tags:
@@ -15,7 +17,7 @@ def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "category": "on_page",
                 "severity": "HIGH",
                 "issue_code": "MISSING_H1",
-                "title": "Missing H1 Heading",
+                "title": f"Missing H1 Tag on {parsed_path}",
                 "description": f"The page {url} does not contain an `<h1>` heading tag.",
                 "recommendation_summary": "Add a single, prominent <h1> tag that describes the primary topic of the page.",
                 "impact": "H1 headings communicate the main subject matter to both search engines and users."
@@ -26,7 +28,7 @@ def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "category": "on_page",
                 "severity": "LOW",
                 "issue_code": "MULTIPLE_H1",
-                "title": "Multiple H1 Headings",
+                "title": f"Multiple H1 Tags ({len(h1_tags)}) on {parsed_path}",
                 "description": f"The page has {len(h1_tags)} `<h1>` tags ({', '.join([repr(h) for h in h1_tags[:3]])}).",
                 "recommendation_summary": "Use a single <h1> heading per page for best SEO structural clarity.",
                 "impact": "Multiple H1 tags can dilute the primary heading signal."
@@ -39,9 +41,9 @@ def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                     "category": "on_page",
                     "severity": "MEDIUM",
                     "issue_code": "EMPTY_H1",
-                    "title": "Empty H1 Heading Tag",
-                    "description": f"An `<h1>` tag exists on {url}, but contains no text.",
-                    "recommendation_summary": "Populate the <h1> tag with relevant text.",
+                    "title": f"Empty H1 Heading Tag on {parsed_path}",
+                    "description": f"An `<h1>` tag exists on {url}, but contains no readable text.",
+                    "recommendation_summary": "Populate the <h1> tag with relevant target keywords.",
                     "impact": "Empty heading tags waste valuable structural signals."
                 })
 
@@ -52,7 +54,7 @@ def analyze_headings(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "category": "on_page",
                 "severity": "LOW",
                 "issue_code": "MISSING_H2",
-                "title": "Lack of Subheadings (H2)",
+                "title": f"Lack of Subheadings (H2) on {parsed_path}",
                 "description": f"Page content has {page.get('word_count')} words but lacks `<h2>` subheadings.",
                 "recommendation_summary": "Break content into logical sections with descriptive <h2> subheadings.",
                 "impact": "Subheadings improve content readability and semantic indexing."

@@ -13,6 +13,10 @@ from ..seo_analyzer.meta import analyze_meta_descriptions
 from ..seo_analyzer.headings import analyze_headings
 from ..seo_analyzer.images import analyze_images
 from ..seo_analyzer.links import analyze_links
+from ..seo_analyzer.mobile_social import analyze_mobile_social
+from ..seo_analyzer.indexing import analyze_indexing
+from ..seo_analyzer.content import analyze_content
+from ..seo_analyzer.url_structure import analyze_url_structure
 from ..technical.security import analyze_security
 from ..technical.sitemap import analyze_sitemap
 from ..technical.canonical import analyze_canonicals
@@ -37,9 +41,17 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         audit.status = "crawling"
         db.commit()
 
-        # 1. Crawl Target Domain
+        # Real-time crawl progress callback
+        def on_crawl_progress(current, total, current_url):
+            try:
+                audit.pages_crawled = current
+                db.commit()
+            except Exception:
+                pass
+
+        # 1. Crawl Target Domain with live progress
         crawler = WebCrawler(target_url=target_url, max_pages=max_pages, max_depth=3)
-        crawled_pages = crawler.crawl()
+        crawled_pages = crawler.crawl(progress_callback=on_crawl_progress)
 
         audit.status = "analyzing"
         audit.pages_crawled = len(crawled_pages)
@@ -66,13 +78,19 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
             db_pages.append(db_page)
         db.commit()
 
-        # 2. Run Analyzers
+        # 2. Run Comprehensive Real-Time Analyzers
         all_issues = []
         all_issues.extend(analyze_titles(crawled_pages))
         all_issues.extend(analyze_meta_descriptions(crawled_pages))
         all_issues.extend(analyze_headings(crawled_pages))
         all_issues.extend(analyze_images(crawled_pages))
         all_issues.extend(analyze_links(crawled_pages))
+
+        # Real-time mobile, social, content, and indexing analyzers
+        all_issues.extend(analyze_mobile_social(crawled_pages))
+        all_issues.extend(analyze_indexing(crawled_pages))
+        all_issues.extend(analyze_content(crawled_pages))
+        all_issues.extend(analyze_url_structure(crawled_pages))
 
         # Technical SEO
         all_issues.extend(analyze_security(target_url, crawled_pages))
