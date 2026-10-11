@@ -53,17 +53,17 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         crawler = WebCrawler(target_url=target_url, max_pages=max_pages, max_depth=3)
         crawled_pages = crawler.crawl(progress_callback=on_crawl_progress)
 
-        # Check if website was actually reached (at least one page responded with status_code > 0)
-        reached_pages = [p for p in crawled_pages if p.get("status_code", 0) > 0]
-        if not reached_pages:
-            fetch_err = crawled_pages[0].get("fetch_error") if crawled_pages else "Connection failed"
+        # Check if website was actually fetched (at least one page was successfully fetched)
+        fetched_pages = [p for p in crawled_pages if p.get("is_fetched", False)]
+        if not fetched_pages:
+            first_err = crawled_pages[0].get("fetch_error") if crawled_pages else "Connection failed"
             audit.status = "failed"
-            audit.error_message = f"Unable to reach {target_url} ({fetch_err}). Please verify the domain is online, accessible, and not blocking automated requests."
+            audit.error_message = f"Unable to analyze {target_url} ({first_err}). The target web server returned an access error or bot challenge and could not be crawled."
             db.commit()
             return
 
         audit.status = "analyzing"
-        audit.pages_crawled = len(crawled_pages)
+        audit.pages_crawled = len(fetched_pages)
         db.commit()
 
         # Save pages to DB
@@ -262,41 +262,3 @@ def list_audits(limit: int = 20, db: Session = Depends(get_db)):
         "pages_crawled": a.pages_crawled,
         "created_at": a.created_at
     } for a in audits]
-
-@router.get("/debug/fetch")
-def debug_fetch(url: str, mode: str = "chrome"):
-    import requests as req
-    if mode == "googlebot":
-        headers = {
-            "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5"
-        }
-    else:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "none",
-            "Sec-Fetch-User": "?1",
-            "Sec-Ch-Ua": '"Chromium";v="128", "Google Chrome";v="128"',
-            "Sec-Ch-Ua-Mobile": "?0",
-            "Sec-Ch-Ua-Platform": '"Windows"'
-        }
-    try:
-        r = req.get(url, headers=headers, timeout=12, allow_redirects=True)
-        return {
-            "mode": mode,
-            "status_code": r.status_code,
-            "title_tag": (r.text.split("<title>")[1].split("</title>")[0]) if "<title>" in r.text else "",
-            "cf_mitigated": r.headers.get("Cf-Mitigated"),
-            "content_length": len(r.content),
-            "history": [h.status_code for h in r.history]
-        }
-    except Exception as e:
-        return {"mode": mode, "error": str(e), "type": type(e).__name__}
-
-

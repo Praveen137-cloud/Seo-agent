@@ -25,6 +25,14 @@ def analyze_sitemap(target_url: str, detected_sitemaps: Optional[List[str]] = No
             if resp.status_code == 200 and ("xml" in resp.headers.get("Content-Type", "").lower() or "<xml" in resp.text[:100].lower() or "<urlset" in resp.text[:200].lower()):
                 found_sitemap = True
                 break
+            elif resp.status_code in (403, 503) or "challenge" in str(resp.headers.get("Cf-Mitigated", "")).lower():
+                try:
+                    fb = requests.get(f"https://r.jina.ai/{sm_url}", timeout=8)
+                    if fb.status_code == 200 and ("xml" in fb.text[:100].lower() or "urlset" in fb.text[:200].lower()):
+                        found_sitemap = True
+                        break
+                except Exception:
+                    pass
         except Exception:
             continue
 

@@ -102,6 +102,28 @@ class WebCrawler:
             redirect_count = len(resp.history)
             redirect_chain = [r.url for r in resp.history]
 
+            # If Cloudflare or WAF challenges the crawler with 403 or managed challenge page
+            is_waf_challenge = (
+                status_code in (403, 503, 429) or
+                "challenge" in str(resp.headers.get("Cf-Mitigated", "")).lower() or
+                "<title>Just a moment...</title>" in resp.text
+            )
+            if is_waf_challenge:
+                logger.info(f"Cloudflare/WAF challenge detected for {url} (HTTP {status_code}). Attempting fallback extraction...")
+                try:
+                    fallback_resp = requests.get(
+                        f"https://r.jina.ai/{url}",
+                        headers={"X-Return-Format": "html"},
+                        timeout=15
+                    )
+                    if fallback_resp.status_code == 200 and len(fallback_resp.text) > 200 and "<title>Just a moment...</title>" not in fallback_resp.text:
+                        resp = fallback_resp
+                        status_code = 200
+                        content_type = "text/html"
+                        load_time_ms = round((time.time() - start_time) * 1000, 2)
+                except Exception as ex:
+                    logger.warning(f"Fallback extraction failed for {url}: {ex}")
+
             # If page returned 4xx or 5xx, accurately record it without fabricating missing metadata
             if status_code >= 400:
                 return {
