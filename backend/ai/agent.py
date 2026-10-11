@@ -32,13 +32,52 @@ class AIAgent:
             parsed = json.loads(cleaned_json)
             recommendations = parsed.get("top_recommendations", [])
             if recommendations and isinstance(recommendations, list) and len(recommendations) > 0:
-                return recommendations
+                validated_recs = []
+                valid_categories = {"on_page", "technical", "security", "performance"}
+                valid_priorities = {"CRITICAL", "HIGH", "MEDIUM", "LOW"}
+                for r in recommendations:
+                    if not isinstance(r, dict):
+                        continue
+                    cat = str(r.get("category", "on_page")).lower()
+                    if cat not in valid_categories:
+                        cat = "on_page"
+                    prio = str(r.get("priority", "MEDIUM")).upper()
+                    if prio not in valid_priorities:
+                        prio = "MEDIUM"
+                    title = str(r.get("title", "")).strip()
+                    if not title:
+                        continue
+                    validated_recs.append({
+                        "category": cat,
+                        "priority": prio,
+                        "title": title,
+                        "explanation": str(r.get("explanation", "")).strip(),
+                        "actionable_steps": r.get("actionable_steps", []) if isinstance(r.get("actionable_steps"), list) else [str(r.get("actionable_steps", ""))],
+                        "suggested_content": r.get("suggested_content") if isinstance(r.get("suggested_content"), dict) else {}
+                    })
+                if validated_recs:
+                    return validated_recs[:5]
         except Exception as e:
             logger.info(f"Using dynamic rule-synthesized AI recommendations generator: {e}")
 
         # Real-time dynamic contextual recommendations synthesized from actual crawl data
         domain = urlparse(target_url).netloc or target_url
         domain_name = domain.replace("www.", "").split(".")[0].capitalize()
+
+        # If site was unreachable, return connectivity guidance
+        if not pages or not any(p.get("status_code", 0) > 0 for p in pages):
+            return [{
+                "category": "technical",
+                "priority": "CRITICAL",
+                "title": "Establish Server Availability and Connectivity",
+                "explanation": f"The analyzer was unable to establish a connection to {domain}. Ensure the web server is online and publicly reachable.",
+                "actionable_steps": [
+                    "Verify DNS records and nameserver configurations.",
+                    "Check server firewall, CDN, or DDoS protection rules to ensure search crawlers are allowed.",
+                    "Verify SSL/TLS certificate validity."
+                ],
+                "suggested_content": {}
+            }]
         
         # Real homepage and content context
         home_page = pages[0] if pages else {}

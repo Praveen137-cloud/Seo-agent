@@ -59,6 +59,9 @@ class SEOIssue(Base):
     description = Column(Text, nullable=False)
     recommendation_summary = Column(Text, nullable=True)
     impact = Column(Text, nullable=True)
+    observed_value = Column(Text, nullable=True)
+    evidence = Column(Text, nullable=True)
+    verification_status = Column(String(50), default="verified")  # verified, unverified, provisional
 
     audit = relationship("Audit", back_populates="issues")
 

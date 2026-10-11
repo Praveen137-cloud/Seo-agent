@@ -87,7 +87,7 @@ class LLMProvider:
 
         # 4. Ollama Local
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=1.5)) as client:
                 models_resp = await client.get(f"{self.ollama_url}/api/tags")
                 selected_model = None
                 if models_resp.status_code == 200:

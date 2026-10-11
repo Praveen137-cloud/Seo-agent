@@ -133,6 +133,18 @@ export default function IssueList({ issues = [] }) {
                       </div>
                     )}
 
+                    {issue.evidence && (
+                      <div className="p-3 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">Verified Audit Evidence:</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                            {issue.verification_status || 'verified'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-mono text-slate-700 dark:text-slate-300 break-all">{issue.evidence}</p>
+                      </div>
+                    )}
+
                     {issue.recommendation_summary && (
                       <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800 space-y-1">
                         <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">Recommended Quick Fix:</span>

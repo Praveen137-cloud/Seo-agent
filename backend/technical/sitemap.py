@@ -1,8 +1,8 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from urllib.parse import urljoin, urlparse
 import requests
 
-def analyze_sitemap(target_url: str, detected_sitemaps: List[str] = None) -> List[Dict[str, Any]]:
+def analyze_sitemap(target_url: str, detected_sitemaps: Optional[List[str]] = None) -> List[Dict[str, Any]]:
     issues = []
     parsed = urlparse(target_url)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
@@ -17,8 +17,12 @@ def analyze_sitemap(target_url: str, detected_sitemaps: List[str] = None) -> Lis
     found_sitemap = False
     for sm_url in candidates:
         try:
-            resp = requests.get(sm_url, timeout=5, headers={"User-Agent": "SEOAgentBot/1.0"})
-            if resp.status_code == 200 and ("xml" in resp.headers.get("Content-Type", "").lower() or "<xml" in resp.text[:100].lower()):
+            resp = requests.get(
+                sm_url,
+                timeout=5,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            )
+            if resp.status_code == 200 and ("xml" in resp.headers.get("Content-Type", "").lower() or "<xml" in resp.text[:100].lower() or "<urlset" in resp.text[:200].lower()):
                 found_sitemap = True
                 break
         except Exception:
@@ -28,12 +32,15 @@ def analyze_sitemap(target_url: str, detected_sitemaps: List[str] = None) -> Lis
         issues.append({
             "page_url": base_url,
             "category": "technical",
-            "severity": "HIGH",
+            "severity": "MEDIUM",
             "issue_code": "MISSING_SITEMAP",
             "title": "XML Sitemap Not Found",
-            "description": f"No valid XML sitemap was accessible at standard paths for {base_url}.",
-            "recommendation_summary": "Generate an XML sitemap (sitemap.xml) and submit it to Google Search Console.",
-            "impact": "XML sitemaps help search engine bots discover and index new or updated pages faster."
+            "description": f"No accessible XML sitemap was found at standard locations (/sitemap.xml) for {base_url}.",
+            "observed_value": "No valid sitemap at standard locations",
+            "evidence": f"Checked locations: {', '.join(candidates[:2])} (Status: 404 or non-XML).",
+            "recommendation_summary": "Generate an automated XML sitemap (sitemap.xml) and reference it in robots.txt.",
+            "impact": "XML sitemaps help search engine crawlers discover, crawl, and prioritize pages efficiently.",
+            "verification_status": "verified"
         })
 
     return issues

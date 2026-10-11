@@ -24,5 +24,19 @@ def get_db():
     finally:
         db.close()
 
+from sqlalchemy import text
+
 def init_db():
     Base.metadata.create_all(bind=engine)
+    # Ensure new columns exist on legacy SQLite/Postgres tables
+    with engine.connect() as conn:
+        for col_name, col_type in [
+            ("observed_value", "TEXT"),
+            ("evidence", "TEXT"),
+            ("verification_status", "VARCHAR(50) DEFAULT 'verified'")
+        ]:
+            try:
+                conn.execute(text(f"ALTER TABLE seo_issues ADD COLUMN {col_name} {col_type}"))
+                conn.commit()
+            except Exception:
+                pass

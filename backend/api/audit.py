@@ -7,7 +7,7 @@ from pydantic import BaseModel, HttpUrl
 
 from ..database.database import get_db
 from ..database.models import Audit, Page, SEOIssue, Recommendation
-from ..crawler.crawler import WebCrawler
+from ..crawler.crawler import WebCrawler, is_valid_public_url
 from ..seo_analyzer.title import analyze_titles
 from ..seo_analyzer.meta import analyze_meta_descriptions
 from ..seo_analyzer.headings import analyze_headings
@@ -53,6 +53,15 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         crawler = WebCrawler(target_url=target_url, max_pages=max_pages, max_depth=3)
         crawled_pages = crawler.crawl(progress_callback=on_crawl_progress)
 
+        # Check if website was actually reached (at least one page responded with status_code > 0)
+        reached_pages = [p for p in crawled_pages if p.get("status_code", 0) > 0]
+        if not reached_pages:
+            fetch_err = crawled_pages[0].get("fetch_error") if crawled_pages else "Connection failed"
+            audit.status = "failed"
+            audit.error_message = f"Unable to reach {target_url} ({fetch_err}). Please verify the domain is online, accessible, and not blocking automated requests."
+            db.commit()
+            return
+
         audit.status = "analyzing"
         audit.pages_crawled = len(crawled_pages)
         db.commit()
@@ -84,7 +93,7 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         all_issues.extend(analyze_meta_descriptions(crawled_pages))
         all_issues.extend(analyze_headings(crawled_pages))
         all_issues.extend(analyze_images(crawled_pages))
-        all_issues.extend(analyze_links(crawled_pages))
+        all_issues.extend(analyze_links(crawled_pages, crawler.tested_links))
 
         # Real-time mobile, social, content, and indexing analyzers
         all_issues.extend(analyze_mobile_social(crawled_pages))
@@ -98,7 +107,7 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         all_issues.extend(analyze_canonicals(crawled_pages))
         all_issues.extend(analyze_performance(crawled_pages))
 
-        # Save issues to DB
+        # Save issues to DB with verified evidence
         for iss in all_issues:
             db_iss = SEOIssue(
                 audit_id=audit_id,
@@ -109,7 +118,10 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
                 title=iss.get("title"),
                 description=iss.get("description"),
                 recommendation_summary=iss.get("recommendation_summary"),
-                impact=iss.get("impact")
+                impact=iss.get("impact"),
+                observed_value=iss.get("observed_value"),
+                evidence=iss.get("evidence"),
+                verification_status=iss.get("verification_status", "verified")
             )
             db.add(db_iss)
         db.commit()
@@ -118,7 +130,7 @@ def run_background_audit(audit_id: str, target_url: str, max_pages: int, db: Ses
         audit.status = "scoring"
         db.commit()
 
-        score_res = calculate_score(all_issues, len(crawled_pages))
+        score_res = calculate_score(all_issues, crawled_pages, target_url)
         audit.score = score_res["overall_score"]
         audit.summary_data = score_res
         db.commit()
@@ -166,6 +178,12 @@ def create_audit(req: AuditCreateRequest, background_tasks: BackgroundTasks, db:
     url = req.url.strip()
     if not url.startswith("http://") and not url.startswith("https://"):
         url = "https://" + url
+
+    if not is_valid_public_url(url):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid URL: Please enter a valid, public HTTP or HTTPS web address."
+        )
 
     new_audit = Audit(
         target_url=url,
@@ -227,7 +245,10 @@ def get_audit_issues(
         "title": i.title,
         "description": i.description,
         "recommendation_summary": i.recommendation_summary,
-        "impact": i.impact
+        "impact": i.impact,
+        "observed_value": i.observed_value,
+        "evidence": i.evidence,
+        "verification_status": i.verification_status or "verified"
     } for i in issues]
 
 @router.get("/audits")
