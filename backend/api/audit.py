@@ -264,17 +264,39 @@ def list_audits(limit: int = 20, db: Session = Depends(get_db)):
     } for a in audits]
 
 @router.get("/debug/fetch")
-def debug_fetch(url: str):
-    crawler = WebCrawler(url, max_pages=1)
+def debug_fetch(url: str, mode: str = "chrome"):
+    import requests as req
+    if mode == "googlebot":
+        headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5"
+        }
+    else:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "Sec-Ch-Ua": '"Chromium";v="128", "Google Chrome";v="128"',
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": '"Windows"'
+        }
     try:
-        r = crawler.session.get(url, headers=crawler.headers, timeout=crawler.timeout, allow_redirects=True)
+        r = req.get(url, headers=headers, timeout=12, allow_redirects=True)
         return {
+            "mode": mode,
             "status_code": r.status_code,
-            "url": r.url,
-            "headers": dict(r.headers),
-            "content_preview": r.text[:500],
+            "title_tag": (r.text.split("<title>")[1].split("</title>")[0]) if "<title>" in r.text else "",
+            "cf_mitigated": r.headers.get("Cf-Mitigated"),
+            "content_length": len(r.content),
             "history": [h.status_code for h in r.history]
         }
     except Exception as e:
-        return {"error": str(e), "type": type(e).__name__}
+        return {"mode": mode, "error": str(e), "type": type(e).__name__}
+
 
