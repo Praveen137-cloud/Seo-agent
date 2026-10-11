@@ -55,11 +55,11 @@ export default function Home() {
     <div className="space-y-12 py-6">
       {/* Hero Section */}
       <section className="text-center space-y-6 max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-tight">
-          Supercharge Your Website <span className="text-red-600">SEO & Rankings</span>
+        <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight transition-colors">
+          Supercharge Your Website <span className="text-red-600 dark:text-red-500">SEO & Rankings</span>
         </h1>
 
-        <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">
+        <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto font-medium transition-colors">
           Fast multi-page crawling, technical diagnostics, 0-100 scoring engine, and automated LLM-powered recommendations in seconds.
         </p>
 
@@ -70,20 +70,22 @@ export default function Home() {
 
       {/* 1-Click Browser Integration Section */}
       <section className="max-w-4xl mx-auto px-4">
-        <div className="p-5 sm:p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <span className="p-1.5 bg-red-50 text-red-600 rounded-lg">
+              <span className="p-1.5 bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 rounded-lg">
                 <Puzzle className="w-4 h-4" />
               </span>
-              <h3 className="text-base font-bold text-slate-900">Chrome Extension & Shortcut Setup</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Chrome Extension & Shortcut Setup</h3>
             </div>
 
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold">
               <button
                 onClick={() => setActiveTab('extension')}
                 className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  activeTab === 'extension' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  activeTab === 'extension' 
+                    ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-xs' 
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Chrome Extension
@@ -91,7 +93,9 @@ export default function Home() {
               <button
                 onClick={() => setActiveTab('search')}
                 className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  activeTab === 'search' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  activeTab === 'search' 
+                    ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-xs' 
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Address Bar Shortcut
@@ -100,17 +104,17 @@ export default function Home() {
           </div>
 
           {activeTab === 'extension' ? (
-            <div className="text-xs text-slate-600 space-y-3 font-medium">
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="text-xs text-slate-600 dark:text-slate-400 space-y-3 font-medium">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Install SEOAgent Chrome Extension</span>
                   </div>
-                  <ol className="list-decimal pl-5 space-y-1 text-slate-700 text-xs mt-1">
+                  <ol className="list-decimal pl-5 space-y-1 text-slate-700 dark:text-slate-300 text-xs mt-1">
                     <li>Click <strong>Download Extension (.zip)</strong> button.</li>
                     <li>Unzip the downloaded file on your computer.</li>
-                    <li>Open <code className="bg-slate-200 px-1 py-0.5 rounded text-red-700 font-mono">chrome://extensions</code>, turn on <strong>Developer mode</strong>, and click <strong>Load unpacked</strong>.</li>
+                    <li>Open <code className="bg-slate-200 dark:bg-slate-700 px-1 py-0.5 rounded text-red-700 dark:text-red-400 font-mono">chrome://extensions</code>, turn on <strong>Developer mode</strong>, and click <strong>Load unpacked</strong>.</li>
                   </ol>
                 </div>
                 <a
@@ -124,14 +128,14 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <div className="text-xs text-slate-600 space-y-2 font-medium">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-slate-800 font-bold">
-                  <Search className="w-3.5 h-3.5 text-red-600" />
+            <div className="text-xs text-slate-600 dark:text-slate-400 space-y-2 font-medium">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold">
+                  <Search className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                   <span>Address Bar Search Shortcut:</span>
                 </div>
-                <p className="text-slate-700">
-                  Add custom site search in Chrome settings with URL pattern: <code className="bg-slate-200 px-1.5 py-0.5 rounded font-mono text-slate-900">https://seo-agent-inky-seven.vercel.app/?url=%s</code>
+                <p className="text-slate-700 dark:text-slate-300">
+                  Add custom site search in Chrome settings with URL pattern: <code className="bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-slate-900 dark:text-slate-100">https://seo-agent-inky-seven.vercel.app/?url=%s</code>
                 </p>
               </div>
             </div>
@@ -141,32 +145,32 @@ export default function Home() {
 
       {/* Feature Highlights Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl space-y-3 hover:border-red-300 hover:shadow-xl transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-600">
+        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 hover:border-red-300 dark:hover:border-red-700/60 hover:shadow-xl transition-all">
+          <div className="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/50 border border-red-200 dark:border-red-800/60 flex items-center justify-center text-red-600 dark:text-red-400">
             <Cpu className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">Controlled Web Crawler</h3>
-          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Controlled Web Crawler</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
             Extracts titles, meta descriptions, H1/H2 heading structure, image alt text, and internal links across your domain.
           </p>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl space-y-3 hover:border-red-300 hover:shadow-xl transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-600">
+        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 hover:border-red-300 dark:hover:border-red-700/60 hover:shadow-xl transition-all">
+          <div className="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center text-rose-600 dark:text-rose-400">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">Technical Diagnostic Engine</h3>
-          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Technical Diagnostic Engine</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
             Evaluates HTTPS security, canonical alignment, XML sitemaps, response latency (TTFB), and document payload sizes.
           </p>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl space-y-3 hover:border-red-300 hover:shadow-xl transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-600">
+        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 hover:border-red-300 dark:hover:border-red-700/60 hover:shadow-xl transition-all">
+          <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">Ollama AI Strategy & Content</h3>
-          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Ollama AI Strategy & Content</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
             Translates findings into simple explanations, prioritizes fixes, and generates ready-to-copy meta titles, descriptions, and keywords.
           </p>
         </div>
@@ -176,8 +180,8 @@ export default function Home() {
       {recentAudits.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <History className="w-5 h-5 text-red-600" />
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <History className="w-5 h-5 text-red-600 dark:text-red-500" />
               Recent SEO Audits
             </h2>
           </div>
@@ -187,13 +191,13 @@ export default function Home() {
               <Link
                 key={audit.id}
                 to={`/audit/${audit.id}`}
-                className="p-5 bg-white border border-slate-200 rounded-2xl hover:border-red-300 hover:shadow-md transition-all flex items-center justify-between group"
+                className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-red-300 dark:hover:border-red-700/60 hover:shadow-md transition-all flex items-center justify-between group"
               >
                 <div className="space-y-1 truncate pr-3">
-                  <span className="font-bold text-slate-900 text-sm block truncate group-hover:text-red-600 transition-colors">
+                  <span className="font-bold text-slate-900 dark:text-white text-sm block truncate group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                     {audit.target_url}
                   </span>
-                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                     <span>{audit.pages_crawled} pages</span>
                     <span>•</span>
                     <span className="capitalize">{audit.status}</span>
@@ -202,10 +206,10 @@ export default function Home() {
 
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
-                    <span className="text-lg font-black text-red-600">{audit.score || 0}</span>
-                    <span className="text-[10px] text-slate-400 block font-bold">/ 100</span>
+                    <span className="text-lg font-black text-red-600 dark:text-red-500">{audit.score || 0}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-bold">/ 100</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-red-600 transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors" />
                 </div>
               </Link>
             ))}

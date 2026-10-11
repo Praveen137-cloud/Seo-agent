@@ -39,6 +39,8 @@ app.include_router(audit.router)
 app.include_router(recommendations.router)
 app.include_router(reports.router)
 
+@app.get("/")
+@app.get("/health")
 @app.get("/api/health")
 def health_check():
     return {
