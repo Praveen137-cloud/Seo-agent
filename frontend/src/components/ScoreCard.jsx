@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, FileText, Cpu, Lock, Zap, Award } from 'lucide-react';
 
-export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 0, targetUrl = '' }) {
+export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 0, targetUrl = '', issues = [] }) {
   const getScoreColor = (s) => {
     if (s >= 90) return 'text-emerald-400 stroke-emerald-400 bg-emerald-500/10 border-emerald-500/30';
     if (s >= 75) return 'text-blue-400 stroke-blue-400 bg-blue-500/10 border-blue-500/30';
@@ -21,6 +21,23 @@ export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 
   const grade = summaryData?.grade || 'B';
 
   const strokeDashoffset = 283 - (283 * score) / 100;
+
+  // Accurately compute severity counts from verified issues if available
+  const criticalCount = issues && issues.length > 0
+    ? issues.filter(i => (i.severity || '').toUpperCase() === 'CRITICAL').length
+    : (summaryData?.severity_counts?.CRITICAL || 0);
+
+  const highCount = issues && issues.length > 0
+    ? issues.filter(i => (i.severity || '').toUpperCase() === 'HIGH').length
+    : (summaryData?.severity_counts?.HIGH || 0);
+
+  const mediumCount = issues && issues.length > 0
+    ? issues.filter(i => (i.severity || '').toUpperCase() === 'MEDIUM').length
+    : (summaryData?.severity_counts?.MEDIUM || 0);
+
+  const lowCount = issues && issues.length > 0
+    ? issues.filter(i => (i.severity || '').toUpperCase() === 'LOW').length
+    : (summaryData?.severity_counts?.LOW || 0);
 
   return (
     <div className="w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
@@ -77,19 +94,19 @@ export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 
         {/* Severity Metrics Pill */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto">
           <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center">
-            <span className="block text-2xl font-bold text-rose-400">{summaryData?.severity_counts?.CRITICAL || 0}</span>
+            <span className="block text-2xl font-bold text-rose-400">{criticalCount}</span>
             <span className="text-[10px] font-semibold text-rose-300 uppercase tracking-wider">Critical Risk</span>
           </div>
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-center">
-            <span className="block text-2xl font-bold text-amber-400">{summaryData?.severity_counts?.HIGH || 0}</span>
+            <span className="block text-2xl font-bold text-amber-400">{highCount}</span>
             <span className="text-[10px] font-semibold text-amber-300 uppercase tracking-wider">High Risk</span>
           </div>
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-center">
-            <span className="block text-2xl font-bold text-yellow-400">{summaryData?.severity_counts?.MEDIUM || 0}</span>
+            <span className="block text-2xl font-bold text-yellow-400">{mediumCount}</span>
             <span className="text-[10px] font-semibold text-yellow-300 uppercase tracking-wider">Medium Risk</span>
           </div>
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-center">
-            <span className="block text-2xl font-bold text-blue-400">{summaryData?.severity_counts?.LOW || 0}</span>
+            <span className="block text-2xl font-bold text-blue-400">{lowCount}</span>
             <span className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">Low Risk</span>
           </div>
         </div>

@@ -100,6 +100,7 @@ export default function Audit() {
         summaryData={audit?.summary_data || {}}
         pagesCrawled={audit?.pages_crawled || 0}
         targetUrl={audit?.target_url || ''}
+        issues={issues}
       />
 
       {/* View Tabs */}
