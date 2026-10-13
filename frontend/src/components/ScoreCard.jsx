@@ -69,7 +69,8 @@ export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 
             </svg>
             <div className="absolute flex flex-col items-center justify-center text-center">
               <span className="text-4xl font-extrabold text-white tracking-tight">{score}</span>
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Out of 100</span>
+              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">SEO Score</span>
+              <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Out of 100</span>
             </div>
           </div>
 

@@ -207,7 +207,7 @@ export default function Home() {
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
                     <span className="text-lg font-black text-red-600 dark:text-red-500">{audit.score || 0}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-bold">/ 100</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-bold">SEO Score</span>
                   </div>
                   <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors" />
                 </div>
