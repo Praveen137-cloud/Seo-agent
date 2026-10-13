@@ -114,10 +114,10 @@ def generate_pdf_report(audit_data: dict, pages: list, issues: list, recommendat
             Paragraph(
                 f"<b>Real-Time Diagnostic Metrics:</b><br/>"
                 f"• Crawled Pages: <b>{pages_crawled}</b><br/>"
-                f"• Total Detected Issues: <b>{len(issues)}</b><br/>"
-                f"• Critical Issues: <font color='#dc2626'><b>{summary.get('severity_counts', {}).get('CRITICAL', 0)}</b></font> &nbsp;|&nbsp; "
-                f"High: <font color='#ea580c'><b>{summary.get('severity_counts', {}).get('HIGH', 0)}</b></font> &nbsp;|&nbsp; "
-                f"Medium: <b>{summary.get('severity_counts', {}).get('MEDIUM', 0)}</b>",
+                f"• Critical Risk: <font color='#dc2626'><b>{summary.get('severity_counts', {}).get('CRITICAL', 0)}</b></font> &nbsp;|&nbsp; "
+                f"High Risk: <font color='#ea580c'><b>{summary.get('severity_counts', {}).get('HIGH', 0)}</b></font> &nbsp;|&nbsp; "
+                f"Medium Risk: <b>{summary.get('severity_counts', {}).get('MEDIUM', 0)}</b> &nbsp;|&nbsp; "
+                f"Low Risk: <b>{summary.get('severity_counts', {}).get('LOW', 0)}</b>",
                 body_style
             )
         ]
@@ -161,10 +161,11 @@ def generate_pdf_report(audit_data: dict, pages: list, issues: list, recommendat
     # 4. Real-Time Detected SEO Issues
     story.append(Paragraph(f"Real-Time Detected SEO Issues ({len(issues)} total findings)", h2_style))
     if issues:
-        issue_rows = [["Severity", "Finding & Context", "Category"]]
+        issue_rows = [["Risk Level", "Finding & Context", "Category"]]
         for iss in issues[:16]:  # Display top 16 distinct issues
             sev = clean_text(iss.get("severity", "LOW"))
             sev_color = "#dc2626" if sev == "CRITICAL" else ("#ea580c" if sev == "HIGH" else ("#d97706" if sev == "MEDIUM" else "#2563eb"))
+            sev_label = f"{sev} RISK" if not sev.endswith("RISK") else sev
             
             p_issue = Paragraph(
                 f"<b>{clean_text(iss.get('title'))}</b><br/>"
@@ -172,11 +173,11 @@ def generate_pdf_report(audit_data: dict, pages: list, issues: list, recommendat
                 f"<font color='#2563eb'>Affected: {clean_text(iss.get('page_url'))}</font>",
                 body_style
             )
-            p_sev = Paragraph(f"<font color='{sev_color}'><b>{sev}</b></font>", bold_body_style)
+            p_sev = Paragraph(f"<font color='{sev_color}'><b>{sev_label}</b></font>", bold_body_style)
             p_cat = Paragraph(clean_text(iss.get("category", "on_page")).replace("_", " ").upper(), body_style)
             issue_rows.append([p_sev, p_issue, p_cat])
 
-        t_issues = Table(issue_rows, colWidths=[70, 390, 80])
+        t_issues = Table(issue_rows, colWidths=[85, 375, 80])
         t_issues.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#f1f5f9")),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#e2e8f0")),
@@ -193,7 +194,9 @@ def generate_pdf_report(audit_data: dict, pages: list, issues: list, recommendat
     story.append(Paragraph("AI-Generated Recommendations & Copywriting Action Plan", h2_style))
     if recommendations:
         for idx, rec in enumerate(recommendations[:5], 1):
-            p_rec_title = Paragraph(f"<b>{idx}. [{clean_text(rec.get('priority'))}] {clean_text(rec.get('title'))}</b>", bold_body_style)
+            pri = clean_text(rec.get('priority', '')).upper()
+            pri_label = pri if 'RISK' in pri else f"{pri} RISK"
+            p_rec_title = Paragraph(f"<b>{idx}. [{pri_label}] {clean_text(rec.get('title'))}</b>", bold_body_style)
             p_rec_exp = Paragraph(clean_text(rec.get("explanation", "")), body_style)
             
             steps = rec.get("actionable_steps", [])

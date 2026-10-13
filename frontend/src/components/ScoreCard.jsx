@@ -78,19 +78,19 @@ export default function ScoreCard({ score = 0, summaryData = {}, pagesCrawled = 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto">
           <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center">
             <span className="block text-2xl font-bold text-rose-400">{summaryData?.severity_counts?.CRITICAL || 0}</span>
-            <span className="text-[10px] font-semibold text-rose-300 uppercase tracking-wider">Critical</span>
+            <span className="text-[10px] font-semibold text-rose-300 uppercase tracking-wider">Critical Risk</span>
           </div>
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-center">
             <span className="block text-2xl font-bold text-amber-400">{summaryData?.severity_counts?.HIGH || 0}</span>
-            <span className="text-[10px] font-semibold text-amber-300 uppercase tracking-wider">High</span>
+            <span className="text-[10px] font-semibold text-amber-300 uppercase tracking-wider">High Risk</span>
           </div>
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-center">
             <span className="block text-2xl font-bold text-yellow-400">{summaryData?.severity_counts?.MEDIUM || 0}</span>
-            <span className="text-[10px] font-semibold text-yellow-300 uppercase tracking-wider">Medium</span>
+            <span className="text-[10px] font-semibold text-yellow-300 uppercase tracking-wider">Medium Risk</span>
           </div>
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-center">
             <span className="block text-2xl font-bold text-blue-400">{summaryData?.severity_counts?.LOW || 0}</span>
-            <span className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">Low</span>
+            <span className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">Low Risk</span>
           </div>
         </div>
       </div>

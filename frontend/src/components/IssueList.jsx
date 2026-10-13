@@ -9,13 +9,13 @@ export default function IssueList({ issues = [] }) {
   const getSeverityBadge = (severity) => {
     switch (severity.toUpperCase()) {
       case 'CRITICAL':
-        return { label: 'CRITICAL', color: 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border-red-300 dark:border-red-800', icon: AlertOctagon };
+        return { label: 'CRITICAL RISK', color: 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border-red-300 dark:border-red-800', icon: AlertOctagon };
       case 'HIGH':
-        return { label: 'HIGH', color: 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800', icon: AlertTriangle };
+        return { label: 'HIGH RISK', color: 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800', icon: AlertTriangle };
       case 'MEDIUM':
-        return { label: 'MEDIUM', color: 'bg-yellow-100 dark:bg-yellow-950/60 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-800', icon: AlertTriangle };
+        return { label: 'MEDIUM RISK', color: 'bg-yellow-100 dark:bg-yellow-950/60 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-800', icon: AlertTriangle };
       default:
-        return { label: 'LOW', color: 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-800', icon: Info };
+        return { label: 'LOW RISK', color: 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-800', icon: Info };
     }
   };
 
@@ -48,10 +48,10 @@ export default function IssueList({ issues = [] }) {
               className="bg-transparent text-slate-800 dark:text-slate-200 font-semibold focus:outline-none cursor-pointer"
             >
               <option value="ALL" className="dark:bg-slate-800 dark:text-slate-200">All Severities</option>
-              <option value="CRITICAL" className="dark:bg-slate-800 dark:text-slate-200">Critical</option>
-              <option value="HIGH" className="dark:bg-slate-800 dark:text-slate-200">High</option>
-              <option value="MEDIUM" className="dark:bg-slate-800 dark:text-slate-200">Medium</option>
-              <option value="LOW" className="dark:bg-slate-800 dark:text-slate-200">Low</option>
+              <option value="CRITICAL" className="dark:bg-slate-800 dark:text-slate-200">Critical Risk</option>
+              <option value="HIGH" className="dark:bg-slate-800 dark:text-slate-200">High Risk</option>
+              <option value="MEDIUM" className="dark:bg-slate-800 dark:text-slate-200">Medium Risk</option>
+              <option value="LOW" className="dark:bg-slate-800 dark:text-slate-200">Low Risk</option>
             </select>
           </div>
 

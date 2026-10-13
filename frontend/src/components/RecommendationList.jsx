@@ -56,7 +56,7 @@ export default function RecommendationList({ recommendations = [] }) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <span className={`px-2.5 py-0.5 text-xs font-extrabold rounded-lg border ${getPriorityBadge(rec.priority)}`}>
-                      {rec.priority}
+                      {rec.priority?.toUpperCase().includes('RISK') ? rec.priority : `${rec.priority} RISK`}
                     </span>
                     <h4 className="text-lg font-bold text-slate-900 dark:text-white">{rec.title}</h4>
                   </div>
